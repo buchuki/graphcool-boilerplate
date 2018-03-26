@@ -11,7 +11,7 @@ export AUTH0_CLIENT_ID=$AUTH0_CLIENT_ID
 export AUTH0_CLIENT_SECRET=$AUTH0_CLIENT_SECRET
 
 TEMPLATE_DIR=$(dirname $0)/templates
-BINNAME=$(echo "$APPNAME" | sed -e 's/\(.*\)/\L\1/' | sed -e 's/ //g')
+BINNAME=$(echo "$APPNAME" | sed -e 's/\(.*\)/\L\1/' | sed -e 's/ / //g')
 
 create-react-app $BINNAME
 
@@ -23,8 +23,6 @@ graphcool init graph.cool.service
 # Clean out some sample files
 rm src/*.css src/App.test.js src/logo.svg
 sed -i "s+import './index.css';++g" src/index.js
-# TODO: If App.js doesn't become templated, we need to sed
-# out some imports in there, too
 rm graph.cool.service/src/*
 
 # Edit some default values
@@ -56,13 +54,9 @@ ENDPOINT=$(graphcool info | grep Simple | sed "s/Simple *//")
 # Set up apollo in frontend
 cd ../
 mkdir src/authentication
-pwd
-ls
-ls src
-ls src/authentication
-ls ../$TEMPLATE_DIR
 cp ../$TEMPLATE_DIR/init_apollo.js src/
 sed -i "s+__GRAPHCOOL_ENDPOINT__+$ENDPOINT+" src/init_apollo.js
+
 # Set up auth in frontend
 cp ../$TEMPLATE_DIR/auth0_config.js src/authentication
 sed -i "s/__AUTH0_CLIENT_ID__/$AUTH0_CLIENT_ID/" src/authentication/auth0_config.js
@@ -89,9 +83,3 @@ yarn add \
 
 
 echo BROWSER=none > .env
-
-
-# TODO:
-#  *  yarn add appropriate stuff in the react directory
-#  *  echo BROWSER=none > .env
-#  * test all the brokens
