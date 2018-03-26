@@ -1,0 +1,16 @@
+types: ./types.graphql
+
+functions:
+
+  authenticate:
+    handler:
+      code:
+        src: ./src/auth0/auth0Authentication.js
+        environment:
+          AUTH0_DOMAIN: ${env:AUTH0_DOMAIN}
+          AUTH0_CLIENT_ID: ${env:AUTH0_CLIENT_ID}
+    type: resolver
+    schema: ./src/auth0/auth0Authentication.graphql
+
+permissions:
+- operation: "*"
