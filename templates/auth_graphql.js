@@ -12,6 +12,7 @@ export const authenticate_user_mutation = gql`
 export const is_authenticated_query = gql`
   {
     user {
+      id
       auth0UserId
     }
   }

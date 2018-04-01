@@ -2,24 +2,27 @@ import React, { Component } from "react";
 import webAuth, { TOKEN_NAME } from "./auth0_config.js";
 import apollo_client from "../init_apollo.js";
 import { is_authenticated_query } from "./auth_graphql.js";
-import { graphql } from "react-apollo";
+import { Query } from "react-apollo";
 
-class AuthButtonComponent extends Component {
+class AuthButton extends Component {
   render() {
-    if (this.props.is_authenticated_query.loading) {
-      return (
-        <button onClick={() => this.login()} disabled>
-          Login
-        </button>
-      );
-    }
-    if (
-      !this.props.is_authenticated_query.user ||
-      !this.props.is_authenticated_query.user.auth0UserId
-    ) {
-      return <button onClick={() => this.login()}>Login</button>;
-    }
-    return <button onClick={() => this.logout()}>Logout</button>;
+    return (
+      <Query query={is_authenticated_query}>
+        {({ loading, error, data }) => {
+          if (loading) {
+            return (
+              <button onClick={() => this.login()} disabled>
+                Login
+              </button>
+            );
+          }
+          if (!data.user || !data.user.auth0UserId) {
+            return <button onClick={() => this.login()}>Login</button>;
+          }
+          return <button onClick={() => this.logout()}>Logout</button>;
+        }}
+      </Query>
+    );
   }
 
   login() {
@@ -28,13 +31,10 @@ class AuthButtonComponent extends Component {
   logout() {
     window.localStorage.removeItem(TOKEN_NAME);
     apollo_client.resetStore();
-    this.props.is_authenticated_query.refetch();
+    webAuth.logout({
+      returnTo: window.location.protocol + "//" + window.location.host + "/"
+    });
   }
 }
-
-const AuthButton = graphql(is_authenticated_query, {
-  name: "is_authenticated_query",
-  options: { fetchPolicy: "network-only" }
-})(AuthButtonComponent);
 
 export default AuthButton;
