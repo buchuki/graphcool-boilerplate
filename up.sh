@@ -1,5 +1,6 @@
 #!/usr/bin/bash
 set -e
+set -x
 
 read -p "Application Name " APPNAME
 read -p "Auth0 Domain " AUTH0_DOMAIN
@@ -11,7 +12,7 @@ export AUTH0_CLIENT_ID=$AUTH0_CLIENT_ID
 export AUTH0_CLIENT_SECRET=$AUTH0_CLIENT_SECRET
 
 TEMPLATE_DIR=$(dirname $0)/templates
-BINNAME=$(echo "$APPNAME" | sed -e 's/\(.*\)/\L\1/' | sed -e 's/ / //g')
+BINNAME=$(echo "$APPNAME" | sed -e 's/\(.*\)/\L\1/' | sed -e 's/ //g')
 
 create-react-app $BINNAME
 
